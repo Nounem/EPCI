@@ -6,6 +6,7 @@ Application Salesforce DX permettant de rechercher des **Établissements Publics
 
 ## Sommaire
 
+- [Aperçu](#aperçu)
 - [Présentation](#présentation)
 - [Architecture](#architecture)
 - [Objets Salesforce](#objets-salesforce)
@@ -13,9 +14,16 @@ Application Salesforce DX permettant de rechercher des **Établissements Publics
 - [Composant Lightning (LWC)](#composant-lightning-lwc)
 - [Prérequis](#prérequis)
 - [Installation et déploiement](#installation-et-déploiement)
+- [Ajouter le composant dans Salesforce](#ajouter-le-composant-dans-salesforce)
 - [Utilisation](#utilisation)
 - [Tests](#tests)
 - [Structure du projet](#structure-du-projet)
+
+---
+
+## Aperçu
+
+![Aperçu du composant EPCI Manager](docs/apercu.png)
 
 ---
 
@@ -205,10 +213,50 @@ Le Remote Site Setting `Geo_API_Gouv` (url : `https://geo.api.gouv.fr`) est incl
 
 ### 5. Ajouter le composant à une page Lightning
 
-1. Ouvrir le **Lightning App Builder**
-2. Sélectionner ou créer une page App Page, Home Page ou Record Page (Account)
+Voir la section [Ajouter le composant dans Salesforce](#ajouter-le-composant-dans-salesforce) ci-dessous.
+
+---
+
+## Ajouter le composant dans Salesforce
+
+Le composant `epciManager` peut être placé sur trois types de pages Lightning. Le comportement change légèrement selon l'emplacement choisi.
+
+### Option 1 — Page d'application (App Page)
+
+Idéal pour un accès rapide depuis la barre de navigation Salesforce.
+
+1. Aller dans **Configuration → Interface utilisateur → Lightning App Builder**
+2. Cliquer sur **Nouveau**, choisir **Page d'application**, puis **Page à une région** (ou la mise en page souhaitée)
+3. Donner un nom à la page (ex. : *Recherche EPCI*)
+4. Dans le panneau de gauche, rechercher **EPCI Manager** dans la liste des composants
+5. Glisser-déposer le composant dans la zone principale
+6. Cliquer sur **Enregistrer**, puis **Activer**
+7. Dans la fenêtre d'activation, cocher **Ajouter à la navigation de l'application** pour faire apparaître le composant dans le menu
+
+> Dans ce mode, le composant fonctionne en autonome. Les EPCIs enregistrés ne seront pas automatiquement liés à un compte.
+
+---
+
+### Option 2 — Page d'accueil (Home Page)
+
+1. Aller dans **Configuration → Interface utilisateur → Lightning App Builder**
+2. Sélectionner la **Page d'accueil** existante (ou en créer une nouvelle)
 3. Glisser le composant **EPCI Manager** dans la mise en page
-4. Enregistrer et activer la page
+4. Enregistrer et activer
+
+---
+
+### Option 3 — Fiche de compte (Record Page — Account) *(recommandé)*
+
+Lorsque le composant est placé sur une fiche Account, il récupère automatiquement l'identifiant du compte et lie l'EPCI enregistré à ce compte via le champ `Account__c`.
+
+1. Naviguer vers un enregistrement **Compte** dans Salesforce
+2. Cliquer sur l'icône **Engrenage (⚙)** en haut à droite → **Modifier la page**
+3. Dans le panneau de gauche, rechercher **EPCI Manager**
+4. Glisser le composant dans la section souhaitée de la fiche (ex. : colonne de droite ou onglet dédié)
+5. Cliquer sur **Enregistrer**, puis **Activer → Attribuer comme page par défaut de l'organisation** (ou par profil)
+
+> C'est l'emplacement recommandé : l'EPCI sauvegardé sera directement rattaché au compte consulté.
 
 ---
 

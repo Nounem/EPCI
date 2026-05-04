@@ -1,0 +1,178 @@
+<template>
+    <div class="epci-wrapper slds-p-around_medium">
+
+        <!-- ══════════════════ BARRE DE RECHERCHE ══════════════════ -->
+        <lightning-card title="Recherche EPCI" icon-name="standard:account">
+            <div class="slds-p-horizontal_medium slds-p-bottom_medium">
+
+                <lightning-input
+                    type="search"
+                    label="Nom de l'EPCI"
+                    placeholder="Ex: Toulouse Métropole, Bordeaux Métropole..."
+                    value={searchTerm}
+                    onchange={handleSearchChange}
+                ></lightning-input>
+
+                <template lwc:if={isLoading}>
+                    <div class="slds-align_absolute-center slds-p-around_small">
+                        <lightning-spinner alternative-text="Recherche..." size="small"></lightning-spinner>
+                    </div>
+                </template>
+
+                <template lwc:if={error}>
+                    <div class="slds-notify slds-notify_alert slds-alert_error slds-m-top_small" role="alert">
+                        <span>{error}</span>
+                    </div>
+                </template>
+
+                <!-- RÉSULTATS DROPDOWN -->
+                <template lwc:if={showResults}>
+                    <div class="results-list slds-m-top_x-small">
+                        <template for:each={results} for:item="epci">
+                            <div
+                                key={epci.code}
+                                class="result-item slds-p-around_small"
+                                data-code={epci.code}
+                                onclick={handleSelectEpci}
+                            >
+                                <div class="slds-media slds-media_center">
+                                    <div class="slds-media__figure">
+                                        <lightning-icon icon-name="standard:account" size="small"></lightning-icon>
+                                    </div>
+                                    <div class="slds-media__body">
+                                        <p class="slds-text-body_regular">
+                                            <strong>{epci.nom}</strong>
+                                        </p>
+                                        <p class="slds-text-body_small slds-text-color_weak">
+                                            Pop. {epci.populationFormatee} &mdash; Dép. {epci.departements}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </template>
+
+            </div>
+        </lightning-card>
+
+        <!-- CHARGEMENT FICHE DÉTAIL -->
+        <template lwc:if={isLoadingDetail}>
+            <div class="slds-align_absolute-center slds-p-around_large slds-m-top_medium">
+                <lightning-spinner
+                    alternative-text="Chargement de la fiche EPCI..."
+                    size="medium"
+                ></lightning-spinner>
+            </div>
+        </template>
+
+        <!-- ══════════════════ FICHE DÉTAIL EPCI ══════════════════ -->
+        <template lwc:if={selectedEpci}>
+            <div class="slds-m-top_medium">
+                <lightning-card icon-name="standard:account">
+                    <span slot="title">{selectedEpci.nom}</span>
+
+                    <div slot="actions" class="slds-grid slds-grid_vertical-align-center slds-gutters_x-small">
+                        <div class="slds-col">
+                            <lightning-input
+                                type="checkbox"
+                                label="Créer les communes membres"
+                                checked={creerCommunes}
+                                onchange={handleCreerCommunesChange}
+                            ></lightning-input>
+                        </div>
+                        <div class="slds-col">
+                            <lightning-button
+                                label={saveLabel}
+                                variant="brand"
+                                icon-name="utility:save"
+                                onclick={handleSave}
+                                disabled={isSaving}
+                            ></lightning-button>
+                        </div>
+                    </div>
+
+                    <div class="slds-p-horizontal_medium slds-p-bottom_medium">
+
+                        <!-- GRILLE D'INFORMATIONS -->
+                        <div class="slds-grid slds-wrap slds-gutters_small">
+
+                            <div class="slds-col slds-size_1-of-2 slds-m-bottom_medium">
+                                <p class="info-label">Code SIREN</p>
+                                <p class="info-value slds-m-top_xx-small">{selectedEpci.code}</p>
+                            </div>
+
+                            <div class="slds-col slds-size_1-of-2 slds-m-bottom_medium">
+                                <p class="info-label">Population totale</p>
+                                <p class="info-value slds-m-top_xx-small">
+                                    {selectedEpci.populationFormatee} hab.
+                                </p>
+                            </div>
+
+                            <div class="slds-col slds-size_1-of-2 slds-m-bottom_medium">
+                                <p class="info-label">Département(s)</p>
+                                <p class="info-value slds-m-top_xx-small">{selectedEpci.departements}</p>
+                            </div>
+
+                            <div class="slds-col slds-size_1-of-2 slds-m-bottom_medium">
+                                <p class="info-label">Communes membres</p>
+                                <p class="info-value slds-m-top_xx-small">{selectedEpci.nombreCommunes}</p>
+                            </div>
+
+                            <div class="slds-col slds-size_1-of-2 slds-m-bottom_medium">
+                                <p class="info-label">Latitude</p>
+                                <p class="info-value slds-m-top_xx-small">{selectedEpci.latitudeFormatee}</p>
+                            </div>
+
+                            <div class="slds-col slds-size_1-of-2 slds-m-bottom_medium">
+                                <p class="info-label">Longitude</p>
+                                <p class="info-value slds-m-top_xx-small">{selectedEpci.longitudeFormatee}</p>
+                            </div>
+
+                        </div>
+
+                        <!-- ══════════ COMMUNES MEMBRES ══════════ -->
+                        <div class={sectionClass}>
+                            <h3 class="slds-section__title">
+                                <button
+                                    class="slds-button slds-section__title-action"
+                                    onclick={toggleCommunes}
+                                >
+                                    <lightning-icon
+                                        icon-name="utility:chevronright"
+                                        class="slds-section__title-action-icon slds-button__icon slds-button__icon_left"
+                                        size="x-small"
+                                    ></lightning-icon>
+                                    <span>Communes membres ({selectedEpci.nombreCommunes})</span>
+                                </button>
+                            </h3>
+
+                            <template lwc:if={showCommunes}>
+                                <div class="slds-section__content slds-m-top_small">
+                                    <template lwc:if={isLoadingCommunes}>
+                                        <div class="slds-align_absolute-center slds-p-around_small">
+                                            <lightning-spinner
+                                                size="small"
+                                                alternative-text="Chargement des communes..."
+                                            ></lightning-spinner>
+                                        </div>
+                                    </template>
+                                    <template lwc:else>
+                                        <lightning-datatable
+                                            key-field="code"
+                                            data={communes}
+                                            columns={communeColumns}
+                                            hide-checkbox-column
+                                        ></lightning-datatable>
+                                    </template>
+                                </div>
+                            </template>
+                        </div>
+
+                    </div>
+                </lightning-card>
+            </div>
+        </template>
+
+    </div>
+</template>

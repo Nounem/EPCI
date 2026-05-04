@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Code_INSEE__c</fullName>
+    <description>Code INSEE de la commune (5 chiffres) — clé externe pour l'upsert</description>
+    <externalId>true</externalId>
+    <label>Code INSEE</label>
+    <length>5</length>
+    <required>false</required>
+    <type>Text</type>
+    <unique>true</unique>
+</CustomField>

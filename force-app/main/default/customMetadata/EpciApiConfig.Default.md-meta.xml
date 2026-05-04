@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata"
+                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>Default</label>
+    <protected>false</protected>
+    <values>
+        <field>BaseUrl__c</field>
+        <value xsi:type="xsd:string">https://geo.api.gouv.fr/epcis</value>
+    </values>
+    <values>
+        <field>SearchFields__c</field>
+        <value xsi:type="xsd:string">nom,code,populationTotale,codesDepartements,codesCommunes</value>
+    </values>
+    <values>
+        <field>DetailFields__c</field>
+        <value xsi:type="xsd:string">nom,code,populationTotale,codesDepartements,codesCommunes,centre</value>
+    </values>
+    <values>
+        <field>CommuneFields__c</field>
+        <value xsi:type="xsd:string">nom,code,codesPostaux,population,surface,codeDepartement,codeRegion</value>
+    </values>
+    <values>
+        <field>SearchLimit__c</field>
+        <value xsi:type="xsd:double">10</value>
+    </values>
+    <values>
+        <field>CommuneLimit__c</field>
+        <value xsi:type="xsd:double">500</value>
+    </values>
+</CustomMetadata>

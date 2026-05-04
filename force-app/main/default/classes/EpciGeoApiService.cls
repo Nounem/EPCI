@@ -1,25 +1,28 @@
 public with sharing class EpciGeoApiService {
 
-    private static final String  BASE_URL      = 'https://geo.api.gouv.fr/epcis';
-    private static final Integer COMMUNE_LIMIT = 500;
-
-    private static final String SEARCH_FIELDS =
-        'nom,code,populationTotale,codesDepartements,codesCommunes';
-
-    private static final String DETAIL_FIELDS =
-        'nom,code,populationTotale,codesDepartements,codesCommunes,centre';
-
-    private static final String COMMUNE_FIELDS =
-        'nom,code,codesPostaux,population,surface,codeDepartement,codeRegion';
+    private static EpciApiConfig__mdt CONFIG {
+        get {
+            if (CONFIG == null) {
+                CONFIG = EpciApiConfig__mdt.getInstance('Default');
+                if (CONFIG == null) {
+                    throw new EpciApiException(
+                        'Configuration EpciApiConfig__mdt introuvable — vérifier que l\'enregistrement "Default" est déployé'
+                    );
+                }
+            }
+            return CONFIG;
+        }
+        private set;
+    }
 
     public static List<EpciWrapper> searchByNom(String nom) {
         if (String.isBlank(nom)) {
             return new List<EpciWrapper>();
         }
-        String url = BASE_URL
+        String url = CONFIG.BaseUrl__c
             + '?nom='    + EncodingUtil.urlEncode(nom, 'UTF-8')
-            + '&fields=' + SEARCH_FIELDS
-            + '&limit=10';
+            + '&fields=' + CONFIG.SearchFields__c
+            + '&limit='  + CONFIG.SearchLimit__c.intValue();
         List<EpciWrapper> result = new List<EpciWrapper>();
         for (Object item : (List<Object>) JSON.deserializeUntyped(doGet(url))) {
             result.add(mapToWrapper((Map<String, Object>) item));
@@ -31,9 +34,9 @@ public with sharing class EpciGeoApiService {
         if (String.isBlank(code)) {
             throw new EpciApiException('Code EPCI requis');
         }
-        String url = BASE_URL
+        String url = CONFIG.BaseUrl__c
             + '/' + EncodingUtil.urlEncode(code, 'UTF-8')
-            + '?fields=' + DETAIL_FIELDS;
+            + '?fields=' + CONFIG.DetailFields__c;
         return mapToWrapper((Map<String, Object>) JSON.deserializeUntyped(doGet(url)));
     }
 
@@ -41,10 +44,10 @@ public with sharing class EpciGeoApiService {
         if (String.isBlank(code)) {
             throw new EpciApiException('Code EPCI requis');
         }
-        String url = BASE_URL
+        String url = CONFIG.BaseUrl__c
             + '/' + EncodingUtil.urlEncode(code, 'UTF-8')
-            + '/communes?fields=' + COMMUNE_FIELDS
-            + '&limit=' + COMMUNE_LIMIT;
+            + '/communes?fields=' + CONFIG.CommuneFields__c
+            + '&limit=' + CONFIG.CommuneLimit__c.intValue();
         List<CommuneWrapper> result = new List<CommuneWrapper>();
         for (Object item : (List<Object>) JSON.deserializeUntyped(doGet(url))) {
             result.add(mapToCommune((Map<String, Object>) item));

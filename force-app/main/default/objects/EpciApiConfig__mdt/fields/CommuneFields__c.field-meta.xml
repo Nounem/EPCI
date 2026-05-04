@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>CommuneFields__c</fullName>
+    <description>Champs retournés pour les communes membres d&apos;un EPCI</description>
+    <fieldManageability>DeveloperControlled</fieldManageability>
+    <label>Champs communes</label>
+    <length>255</length>
+    <type>Text</type>
+</CustomField>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>DetailFields__c</fullName>
+    <description>Champs retournés lors de la récupération du détail d&apos;un EPCI</description>
+    <fieldManageability>DeveloperControlled</fieldManageability>
+    <label>Champs de détail</label>
+    <length>255</length>
+    <type>Text</type>
+</CustomField>

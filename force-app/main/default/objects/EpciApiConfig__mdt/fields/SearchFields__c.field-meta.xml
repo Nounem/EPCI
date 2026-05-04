@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>SearchFields__c</fullName>
+    <description>Champs retournés lors de la recherche par nom</description>
+    <fieldManageability>DeveloperControlled</fieldManageability>
+    <label>Champs de recherche</label>
+    <length>255</length>
+    <type>Text</type>
+</CustomField>

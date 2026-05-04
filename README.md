@@ -2,6 +2,8 @@
 
 Application Salesforce DX permettant de rechercher des **Établissements Publics de Coopération Intercommunale (EPCI)** via l'API officielle du gouvernement français ([geo.api.gouv.fr](https://geo.api.gouv.fr)), puis d'enregistrer les données enrichies directement dans Salesforce.
 
+[![Deploy to Salesforce](https://raw.githubusercontent.com/afawcett/githubsfdeploy/master/deploy.png)](https://githubsfdeploy.herokuapp.com?owner=Nounem&repo=EPCI&ref=main)
+
 ---
 
 ## Sommaire

@@ -1,9 +1,10 @@
 public with sharing class EpciGeoApiService {
 
-    private static final String BASE_URL = 'https://geo.api.gouv.fr/epcis';
+    private static final String  BASE_URL      = 'https://geo.api.gouv.fr/epcis';
+    private static final Integer COMMUNE_LIMIT = 500;
 
     private static final String SEARCH_FIELDS =
-        'nom,code,populationTotale,codesDepartements';
+        'nom,code,populationTotale,codesDepartements,codesCommunes';
 
     private static final String DETAIL_FIELDS =
         'nom,code,populationTotale,codesDepartements,codesCommunes,centre';
@@ -12,6 +13,9 @@ public with sharing class EpciGeoApiService {
         'nom,code,codesPostaux,population,surface,codeDepartement,codeRegion';
 
     public static List<EpciWrapper> searchByNom(String nom) {
+        if (String.isBlank(nom)) {
+            return new List<EpciWrapper>();
+        }
         String url = BASE_URL
             + '?nom='    + EncodingUtil.urlEncode(nom, 'UTF-8')
             + '&fields=' + SEARCH_FIELDS
@@ -24,6 +28,9 @@ public with sharing class EpciGeoApiService {
     }
 
     public static EpciWrapper getByCode(String code) {
+        if (String.isBlank(code)) {
+            throw new EpciApiException('Code EPCI requis');
+        }
         String url = BASE_URL
             + '/' + EncodingUtil.urlEncode(code, 'UTF-8')
             + '?fields=' + DETAIL_FIELDS;
@@ -31,10 +38,13 @@ public with sharing class EpciGeoApiService {
     }
 
     public static List<CommuneWrapper> getCommunesByCode(String code) {
+        if (String.isBlank(code)) {
+            throw new EpciApiException('Code EPCI requis');
+        }
         String url = BASE_URL
             + '/' + EncodingUtil.urlEncode(code, 'UTF-8')
             + '/communes?fields=' + COMMUNE_FIELDS
-            + '&limit=500';
+            + '&limit=' + COMMUNE_LIMIT;
         List<CommuneWrapper> result = new List<CommuneWrapper>();
         for (Object item : (List<Object>) JSON.deserializeUntyped(doGet(url))) {
             result.add(mapToCommune((Map<String, Object>) item));
@@ -79,8 +89,8 @@ public with sharing class EpciGeoApiService {
         if (centre != null) {
             List<Object> coords = (List<Object>) centre.get('coordinates');
             if (coords != null && coords.size() >= 2) {
-                w.longitude = Double.valueOf(String.valueOf(coords[0]));
-                w.latitude  = Double.valueOf(String.valueOf(coords[1]));
+                w.longitude = ((Decimal) coords[0]).doubleValue();
+                w.latitude  = ((Decimal) coords[1]).doubleValue();
             }
         }
 
@@ -94,7 +104,7 @@ public with sharing class EpciGeoApiService {
         c.population      = m.get('population') != null
             ? Integer.valueOf(m.get('population')) : null;
         c.surface         = m.get('surface') != null
-            ? Double.valueOf(String.valueOf(m.get('surface'))) : null;
+            ? ((Decimal) m.get('surface')).doubleValue() : null;
         c.codeDepartement = (String) m.get('codeDepartement');
         c.codeRegion      = (String) m.get('codeRegion');
 
